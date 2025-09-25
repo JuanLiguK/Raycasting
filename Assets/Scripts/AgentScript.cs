@@ -13,6 +13,8 @@ public class AgentScript : MonoBehaviour
     [SerializeField] float velocity;
     [SerializeField] Transform currentDestination;
     [SerializeField] int currntPatrolPointIndex;
+    [SerializeField] Transform Player;
+    [SerializeField] RaycastSight raycastsight;
 
     private void Awake()
     {
@@ -38,7 +40,10 @@ public class AgentScript : MonoBehaviour
             {
                 currntPatrolPointIndex = 0;
             }
-
+            if (raycastsight.raycastHit == "Player")
+            {
+                currentDestination = Player;
+            }
             currentDestination = patrolPoints[currntPatrolPointIndex];
         }
         agent.destination = currentDestination.position;
