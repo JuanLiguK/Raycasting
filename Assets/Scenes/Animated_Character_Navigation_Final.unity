@@ -111,7 +111,7 @@ NavMeshSettings:
     accuratePlacement: 0
     debug:
       m_Flags: 0
-  m_NavMeshData: {fileID: 23800000, guid: 99042e84a7109be468c9402f0811e43d, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 2497d8c3bd693d248a58e010084fdddd, type: 2}
 --- !u!1 &22634213
 GameObject:
   m_ObjectHideFlags: 0
@@ -318,6 +318,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 183691184}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &184961498 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8301348219256438973, guid: d23a71d629ca2cb428e58efdcf5d4c1b,
+    type: 3}
+  m_PrefabInstance: {fileID: 564012839}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &281425398
 GameObject:
   m_ObjectHideFlags: 0
@@ -833,6 +839,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 8301348219256675485, guid: d23a71d629ca2cb428e58efdcf5d4c1b,
+        type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d23a71d629ca2cb428e58efdcf5d4c1b, type: 3}
 --- !u!1 &630779962
@@ -878,8 +889,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a81fccb8df376af46a73847db18ed5da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Name: 
+  m_EditorClassIdentifier: 
   originTR: {fileID: 630779963}
   rayLenght: 3
+  raycastHit: 
 --- !u!1 &720962553
 GameObject:
   m_ObjectHideFlags: 0
@@ -1521,12 +1537,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1584045126}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!95 &1622287060 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 9500000, guid: 3fb269cac241226408bf2d63c2dbe471,
-    type: 3}
-  m_PrefabInstance: {fileID: 1978980602}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1622287061 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400052, guid: 3fb269cac241226408bf2d63c2dbe471,
@@ -2198,9 +2208,8 @@ MonoBehaviour:
   - {fileID: 1547454747}
   - {fileID: 818597026}
   - {fileID: 1076018075}
-  isPatroling: 1
   arrivalDistance: 1
-  anim: {fileID: 1622287060}
-  velocity: 0
-  currentDestination: {fileID: 0}
-  currntPatrolPointIndex: 0
+  player: {fileID: 184961498}
+  rayOrigin: {fileID: 630779963}
+  rayLength: 10
+  lostTime: 2
