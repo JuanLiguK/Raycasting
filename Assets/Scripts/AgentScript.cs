@@ -2,37 +2,48 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
+
 
 public class AgentScript : MonoBehaviour
 {
     NavMeshAgent agent;
 
+
     [Header("Patrol")]
-    [SerializeField] Transform[] patrolPoints; // Points to patrol
+    [SerializeField] Transform[] patrolPoints;
     [SerializeField] float arrivalDistance = 1f;
 
-    [Header("Chase")]
-    [SerializeField] Transform player; // Player transform
-    [SerializeField] Transform rayOrigin; // Object from which the raycast is fired
-    [SerializeField] float rayLength = 10f;
-    [SerializeField] float lostTime = 2f; // Time to lose sight before returning to patrol
 
-    Animator animator = null; // Animator of the NPC
+    [Header("Chase")]
+    [SerializeField] Transform player;
+    [SerializeField] Transform rayOrigin;
+    [SerializeField] float rayLength = 10f;
+    [SerializeField] float lostTime = 2f;
+    [SerializeField] float catchDistance = 1.5f;
+
+
+    Animator animator = null;
+
 
     int currentPatrolIndex = 0;
     Transform currentDestination;
 
+
     bool isChasing = false;
-    float lastSeenTime;
+    float lastSeenTime = -Mathf.Infinity;
+
 
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
     }
+
 
     void Start()
     {
-        if (patrolPoints.Length > 0)
+        if (patrolPoints != null && patrolPoints.Length > 0)
         {
             currentPatrolIndex = 0;
             currentDestination = patrolPoints[currentPatrolIndex];
@@ -40,51 +51,99 @@ public class AgentScript : MonoBehaviour
         }
     }
 
+
     void Update()
     {
         DetectPlayer();
 
+
         if (isChasing)
         {
-            agent.destination = player.position;
+            if (player != null)
+                agent.destination = player.position;
+
+
+            float distanceToPlayer = player != null ? Vector3.Distance(transform.position, player.position) : Mathf.Infinity;
+            if (distanceToPlayer <= catchDistance)
+            {
+                PlayerCaught();
+            }
+
+
+            if (animator != null)
+                animator.SetBool("isWalking", true);
         }
         else
         {
-            // Normal patrol
             if (!agent.pathPending && agent.remainingDistance <= arrivalDistance)
             {
                 currentPatrolIndex++;
-                if (currentPatrolIndex >= patrolPoints.Length)
-                {
+                if (patrolPoints != null && currentPatrolIndex >= patrolPoints.Length)
                     currentPatrolIndex = 0;
-                }
+
 
                 currentDestination = patrolPoints[currentPatrolIndex];
                 agent.destination = currentDestination.position;
             }
+
+
+            if (animator != null)
+            {
+                if (!agent.pathPending && agent.remainingDistance <= arrivalDistance)
+                    animator.SetBool("isWalking", false);
+                else
+                    animator.SetBool("isWalking", true);
+            }
         }
 
 
-        Debug.DrawRay(rayOrigin.position, rayOrigin.forward * rayLength, Color.red);
+        if (rayOrigin != null)
+            Debug.DrawRay(rayOrigin.position, rayOrigin.forward * rayLength, Color.red);
     }
+
 
     void DetectPlayer()
     {
+        if (rayOrigin == null || player == null) return;
+
+
         RaycastHit hit;
         if (Physics.Raycast(rayOrigin.position, rayOrigin.forward, out hit, rayLength))
         {
-            if (hit.transform == player)
+          
+            if (hit.transform == player || hit.transform.IsChildOf(player))
             {
                 isChasing = true;
                 lastSeenTime = Time.time;
+                return;
             }
         }
-        else
+
+
+       
+        if (isChasing && Time.time - lastSeenTime > lostTime)
         {
-            if (Time.time - lastSeenTime > lostTime)
+            isChasing = false;
+
+
+            if (patrolPoints != null && patrolPoints.Length > 0)
             {
-                isChasing = false;
+                currentPatrolIndex = Random.Range(0, patrolPoints.Length);
+                currentDestination = patrolPoints[currentPatrolIndex];
+                agent.destination = currentDestination.position;
             }
         }
     }
+
+
+    void PlayerCaught()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        SceneManager.LoadScene("GameOverScene");
+    }
 }
+
+
+
+
