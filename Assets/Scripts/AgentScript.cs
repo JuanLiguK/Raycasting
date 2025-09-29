@@ -5,6 +5,11 @@ using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 
 
+
+
+
+
+
 public class AgentScript : MonoBehaviour
 {
     NavMeshAgent agent;
@@ -13,8 +18,6 @@ public class AgentScript : MonoBehaviour
     [Header("Patrol")]
     [SerializeField] Transform[] patrolPoints;
     [SerializeField] float arrivalDistance = 1f;
-
-
     [Header("Chase")]
     [SerializeField] Transform player;
     [SerializeField] Transform rayOrigin;
@@ -25,22 +28,17 @@ public class AgentScript : MonoBehaviour
 
     Animator animator = null;
 
-
     int currentPatrolIndex = 0;
     Transform currentDestination;
 
-
     bool isChasing = false;
     float lastSeenTime = -Mathf.Infinity;
-
 
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
     }
-
-
     void Start()
     {
         if (patrolPoints != null && patrolPoints.Length > 0)
@@ -50,8 +48,6 @@ public class AgentScript : MonoBehaviour
             agent.destination = currentDestination.position;
         }
     }
-
-
     void Update()
     {
         DetectPlayer();
@@ -100,8 +96,6 @@ public class AgentScript : MonoBehaviour
         if (rayOrigin != null)
             Debug.DrawRay(rayOrigin.position, rayOrigin.forward * rayLength, Color.red);
     }
-
-
     void DetectPlayer()
     {
         if (rayOrigin == null || player == null) return;
@@ -110,7 +104,7 @@ public class AgentScript : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(rayOrigin.position, rayOrigin.forward, out hit, rayLength))
         {
-          
+
             if (hit.transform == player || hit.transform.IsChildOf(player))
             {
                 isChasing = true;
@@ -118,9 +112,6 @@ public class AgentScript : MonoBehaviour
                 return;
             }
         }
-
-
-       
         if (isChasing && Time.time - lastSeenTime > lostTime)
         {
             isChasing = false;
@@ -134,8 +125,6 @@ public class AgentScript : MonoBehaviour
             }
         }
     }
-
-
     void PlayerCaught()
     {
         Cursor.lockState = CursorLockMode.None;
